@@ -72,12 +72,12 @@ c4.metric("Online delivery %", f"{k['pct_delivery']}%")
 # ---------- row 1 ----------
 a, b = st.columns(2)
 df = run(f"SELECT city, COUNT(*) AS total FROM restaurants {W} GROUP BY city ORDER BY total DESC LIMIT 10", params)
-a.plotly_chart(px.bar(df, x="city", y="total", title="Top 10 cities by restaurant count"), use_container_width=True)
+a.plotly_chart(px.bar(df, x="city", y="total", title="Top 10 cities by restaurant count"), width="stretch")
 
 df = run(f"""SELECT city, COUNT(*) AS total, ROUND(AVG(aggregate_rating),2) AS avg_rating
              FROM restaurants {W} GROUP BY city HAVING total >= 20
              ORDER BY avg_rating DESC LIMIT 10""", params)
-b.plotly_chart(px.bar(df, x="city", y="avg_rating", title="Best-rated cities (min 20 restaurants)"), use_container_width=True)
+b.plotly_chart(px.bar(df, x="city", y="avg_rating", title="Best-rated cities (min 20 restaurants)"), width="stretch")
 
 # ---------- row 2 ----------
 a, b = st.columns(2)
@@ -85,23 +85,23 @@ df = run(f"""SELECT has_table_booking, has_online_delivery, COUNT(*) AS total,
                     ROUND(AVG(aggregate_rating),2) AS avg_rating
              FROM restaurants {W} GROUP BY has_table_booking, has_online_delivery""", params)
 a.plotly_chart(px.bar(df, x="has_table_booking", y="avg_rating", color="has_online_delivery",
-                      barmode="group", title="Rating: table booking vs online delivery"), use_container_width=True)
+                      barmode="group", title="Rating: table booking vs online delivery"), width="stretch")
 
 df = run(f"""SELECT price_range, COUNT(*) AS total, ROUND(AVG(aggregate_rating),2) AS avg_rating,
                     ROUND(AVG(votes)) AS avg_votes
              FROM restaurants {W} GROUP BY price_range ORDER BY price_range""", params)
 b.plotly_chart(px.bar(df, x="price_range", y="avg_rating", color="avg_votes",
-                      title="Price range vs average rating"), use_container_width=True)
+                      title="Price range vs average rating"), width="stretch")
 
 # ---------- row 3 ----------
 a, b = st.columns(2)
 df = run(f"SELECT rating_text, COUNT(*) AS total FROM restaurants {W} GROUP BY rating_text ORDER BY total DESC", params)
-a.plotly_chart(px.pie(df, names="rating_text", values="total", title="Rating distribution"), use_container_width=True)
+a.plotly_chart(px.pie(df, names="rating_text", values="total", title="Rating distribution"), width="stretch")
 
 df = run(f"""SELECT cuisines, COUNT(*) AS total FROM restaurants {W} AND cuisines IS NOT NULL
              GROUP BY cuisines ORDER BY total DESC LIMIT 10""", params)
 b.plotly_chart(px.bar(df, x="total", y="cuisines", orientation="h", title="Most common cuisine combos")
-               .update_yaxes(autorange="reversed"), use_container_width=True)
+               .update_yaxes(autorange="reversed"), width="stretch")
 
 # ---------- map ----------
 df = run(f"""SELECT restaurant_name, city, aggregate_rating, votes, latitude, longitude
@@ -112,10 +112,10 @@ if not df.empty:
                          hover_name="restaurant_name", hover_data=["city", "votes"],
                          zoom=3, height=500, title="Restaurant map (max 3000 points)",
                          color_continuous_scale="RdYlGn")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width="stretch")
 
 # ---------- table ----------
 st.subheader("Top-rated restaurants (by rating, then votes)")
 df = run(f"""SELECT restaurant_name, city, cuisines, aggregate_rating, votes
              FROM restaurants {W} ORDER BY aggregate_rating DESC, votes DESC LIMIT 20""", params)
-st.dataframe(df, use_container_width=True, hide_index=True)
+st.dataframe(df, width="stretch", hide_index=True)
