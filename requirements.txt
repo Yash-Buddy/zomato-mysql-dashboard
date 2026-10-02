@@ -1,0 +1,9 @@
+# Core rendering (always required)
+matplotlib>=3.7
+numpy>=1.24
+Pillow>=10.0
+
+# Video background support — install ONE of the following:
+#   pip install "imageio[ffmpeg]"    (recommended)
+#   pip install opencv-python        (alternative)
+imageio[ffmpeg]>=2.31
